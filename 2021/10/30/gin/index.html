@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  
+  
+  <title>
+    gin框架基础 |
+    
+    郑海镕的博客
+  </title>
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+    
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<script src="/js/pace.min.js"></script>
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <main class="content">
+    <section class="outer">
+  <article id="post-gin" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+      
+
+<h1 class="article-title" itemprop="name">
+  gin框架基础
+</h1>
+
+
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2021/10/30/gin/" class="article-date">
+  <time datetime="2021-10-30T08:37:02.050Z" itemprop="datePublished">2021-10-30</time>
+</a>
+      
+    </div>
+    
+
+    
+    
+<div class="tocbot"></div>
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+      
+      
+      <p>Gin框架是go web开发中一种常用的框架，帮助你快速搭建一个web。Gin 是一个基于 Go 语言编写的 Web 框架，与 martini 框架类似，但拥有更好的性能，借助高性能的 httprouter，速度提升了近 40 倍。如果你追求高性能和开发效率，你会爱上 Gin 框架。</p>
+<h2 id="内置路由器"><a href="#内置路由器" class="headerlink" title="内置路由器"></a>内置路由器</h2><p>Gin框架中的路由使用的是httprouter这个库。其基本原理就是构造一个路由地址的前缀树。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">r ：=gin.Default()</span><br><span class="line">r.run(<span class="string">&quot;:8080&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>初始化路由器并且设置端口号为8080，默认为8080。也可以更改为你所喜欢的端口号，前提是你电脑里面没有资源占用这个端口号。</p>
+<h2 id="模板渲染"><a href="#模板渲染" class="headerlink" title="模板渲染"></a>模板渲染</h2><p>Gin框架中使用LoadHTMLGlob()或者LoadHTMLFiles()方法进行HTML模板渲染。</p>
+<h2 id="静态文件"><a href="#静态文件" class="headerlink" title="静态文件"></a>静态文件</h2><p>我们只需要按照以下方式在渲染页面前调用gin.Static方法即可。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	r := gin.Default()</span><br><span class="line">	r.Static(<span class="string">&quot;/static&quot;</span>, <span class="string">&quot;./static&quot;</span>)</span><br><span class="line">	r.LoadHTMLGlob(<span class="string">&quot;templates/**/*&quot;</span>)</span><br><span class="line">   <span class="comment">// ...</span></span><br><span class="line">	r.Run(<span class="string">&quot;:8080&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Gin框架获取参数"><a href="#Gin框架获取参数" class="headerlink" title="Gin框架获取参数"></a>Gin框架获取参数</h2><h3 id="获取querystring参数"><a href="#获取querystring参数" class="headerlink" title="获取querystring参数"></a>获取querystring参数</h3><p>querystring指的是请求的地址中?后面携带的参数，例如：/login?username=小郑&amp;age=21。 获取请求的querystring参数的方法如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">//Default返回一个默认的路由引擎</span></span><br><span class="line">	r := gin.Default()</span><br><span class="line">	r.GET(<span class="string">&quot;/login&quot;</span>, <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line">		username := c.Query(<span class="string">&quot;username&quot;</span>)</span><br><span class="line">		age := c.Query(<span class="string">&quot;age&quot;</span>)</span><br><span class="line">		<span class="comment">//输出json结果给调用方</span></span><br><span class="line">		c.JSON(http.StatusOK, gin.H&#123;</span><br><span class="line">			<span class="string">&quot;message&quot;</span>:  <span class="string">&quot;ok&quot;</span>,</span><br><span class="line">			<span class="string">&quot;username&quot;</span>: username,</span><br><span class="line">			<span class="string">&quot;age&quot;</span>:  age,</span><br><span class="line">		&#125;)</span><br><span class="line">	&#125;)</span><br><span class="line">	r.Run()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="获取表单数据"><a href="#获取表单数据" class="headerlink" title="获取表单数据"></a>获取表单数据</h3><p>当前端页面用到表单提交的时候，如何获取表单内的数据呢？gin框架中使用Postform来获取数据，举个例子：<br>前端form代码：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&quot;zh-CN&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>postform用法实例<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">form</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;text name=&quot;</span><span class="attr">username</span>&quot; <span class="attr">required</span>=<span class="string">&quot;&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;text name=&quot;</span><span class="attr">password</span>&quot; <span class="attr">required</span>=<span class="string">&quot;&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;submit value=&quot;</span>登录&quot; &gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>使用postform来获取表单数据：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">//Default返回一个默认的路由引擎</span></span><br><span class="line">	r := gin.Default()</span><br><span class="line">    <span class="comment">//表单采用post发送请求</span></span><br><span class="line">	r.POST(<span class="string">&quot;/login&quot;</span>, <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line">		username := c.Postform(<span class="string">&quot;username&quot;</span>)</span><br><span class="line">		password := c.Postform(<span class="string">&quot;password&quot;</span>)</span><br><span class="line">		<span class="comment">//输出json结果给调用方</span></span><br><span class="line">		c.JSON(http.StatusOK, gin.H&#123;</span><br><span class="line">			<span class="string">&quot;message&quot;</span>:  <span class="string">&quot;ok&quot;</span>,</span><br><span class="line">			<span class="string">&quot;username&quot;</span>: username,</span><br><span class="line">			<span class="string">&quot;password&quot;</span>:  password,</span><br><span class="line">		&#125;)</span><br><span class="line">	&#125;)</span><br><span class="line">	r.Run()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="获取path参数"><a href="#获取path参数" class="headerlink" title="获取path参数"></a>获取path参数</h3><p>如果url是这样的：/login/郑海镕/21，如何获取url中的姓名和年龄呢？，举例如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">//Default返回一个默认的路由引擎</span></span><br><span class="line">	r := gin.Default()</span><br><span class="line">    <span class="comment">//表单采用post发送请求</span></span><br><span class="line">	r.GET(<span class="string">&quot;/login/:name/:age&quot;</span>, <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line">		username := c.Param(<span class="string">&quot;name&quot;</span>)</span><br><span class="line">		age := c.Param(<span class="string">&quot;age&quot;</span>)</span><br><span class="line">		<span class="comment">//输出json结果给调用方</span></span><br><span class="line">		c.JSON(http.StatusOK, gin.H&#123;</span><br><span class="line">			<span class="string">&quot;message&quot;</span>:  <span class="string">&quot;ok&quot;</span>,</span><br><span class="line">			<span class="string">&quot;username&quot;</span>: username,</span><br><span class="line">			<span class="string">&quot;age&quot;</span>:  age,</span><br><span class="line">		&#125;)</span><br><span class="line">	&#125;)</span><br><span class="line">	r.Run()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="参数绑定"><a href="#参数绑定" class="headerlink" title="参数绑定"></a>参数绑定</h2><p>参数绑定用函数ShouldBind来进行绑定操作，识别请求数据类型并利用反射机制自动提取请求中QueryString、form表单、JSON、XML等参数到结构体中。只需要在声明结构体中用tag添加字段即可利用参数绑定，例如：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> student <span class="keyword">struct</span>&#123;</span><br><span class="line">    name <span class="keyword">string</span> <span class="string">`form:&quot;username&quot; json:&quot;username&quot; binding:&quot;required&quot;`</span></span><br><span class="line">    age <span class="keyword">int</span> <span class="string">`form:&quot;age&quot; json:&quot;age&quot; binding:&quot;required&quot;`</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果是 GET 请求，只使用 Form 绑定引擎（query）。<br>如果是 POST 请求，首先检查 content-type 是否为 JSON 或 XML，然后再使用 Form（form-data）。</p>
+<h2 id="将数据返回给前端"><a href="#将数据返回给前端" class="headerlink" title="将数据返回给前端"></a>将数据返回给前端</h2><p>gin框架使用content.HTML(“返回的具体的前端页面(比如a.html)”,gin.H{<br>    返回的内容<br>})<br>具体代码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">//Default返回一个默认的路由引擎</span></span><br><span class="line">	r := gin.Default()</span><br><span class="line">    <span class="comment">//表单采用post发送请求</span></span><br><span class="line">	r.GET(<span class="string">&quot;/login/:name/:age&quot;</span>, <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line">		username := c.Param(<span class="string">&quot;name&quot;</span>)</span><br><span class="line">		age := c.Param(<span class="string">&quot;age&quot;</span>)</span><br><span class="line">		<span class="comment">//输出json结果给调用方</span></span><br><span class="line">		c.HTML(<span class="string">&quot;a.html&quot;</span>, gin.H&#123;</span><br><span class="line">			<span class="string">&quot;message&quot;</span>:  <span class="string">&quot;ok&quot;</span>,</span><br><span class="line">			<span class="string">&quot;username&quot;</span>: username,</span><br><span class="line">			<span class="string">&quot;age&quot;</span>:  age,</span><br><span class="line">		&#125;)</span><br><span class="line">	&#125;)</span><br><span class="line">	r.Run()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>此时已经将username和age以及message传给前端为a.html页面，如何在a.html中获取这些值？上代码：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&quot;zh-CN&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>前端接收后端的值<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">&#123;&#123; .message &#125;&#125;</span><br><span class="line">&#123;&#123; .username&#125;&#125;</span><br><span class="line">&#123;&#123; .age&#125;&#125;</span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>其中.表示一个传给前端数据的整体，.message就是细分到某个map，如果url为/login/郑海镕/21，这时候前端显示的内容就是ok 郑海镕 21。</p>
+<h2 id="前端中遍历数组"><a href="#前端中遍历数组" class="headerlink" title="前端中遍历数组"></a>前端中遍历数组</h2><p>如果后端给前端传了一个数组，如何遍历这个数组呢？举例说明：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&quot;zh-CN&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>前端接收后端的值<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">&#123;&#123; for $i,$v :=range .&#125;&#125;</span><br><span class="line">&#123;&#123;$i&#125;&#125;--&#123;&#123;$v&#125;&#125;</span><br><span class="line">&#123;&#123;end&#125;&#125;</span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>代码解释：如果前端接收到的是一个数组，数组里面的值是3 2 1，那么遍历数组中$i，表示index，也就是索引，从0开始。$v，表示遍历出来的值，所以这个结果便是<br>0–3<br>1–2<br>2–1</p>
+<h2 id="重定向"><a href="#重定向" class="headerlink" title="重定向"></a>重定向</h2><h3 id="HTTP重定向"><a href="#HTTP重定向" class="headerlink" title="HTTP重定向"></a>HTTP重定向</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">r.GET(<span class="string">&quot;/test&quot;</span>, <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line">	c.Redirect(http.StatusMovedPermanently, <span class="string">&quot;http://www.baidu.com/&quot;</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<h3 id="路由重定向"><a href="#路由重定向" class="headerlink" title="路由重定向"></a>路由重定向</h3><p>路由重定向使用HandleContext，举例：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">r.GET(<span class="string">&quot;/test&quot;</span>, <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line">    <span class="comment">// 指定重定向的URL</span></span><br><span class="line">    c.Request.URL.Path = <span class="string">&quot;/test2&quot;</span></span><br><span class="line">    r.HandleContext(c)</span><br><span class="line">&#125;)</span><br><span class="line">r.GET(<span class="string">&quot;/test2&quot;</span>, <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line">    c.JSON(http.StatusOK, gin.H&#123;<span class="string">&quot;hello&quot;</span>: <span class="string">&quot;world&quot;</span>&#125;)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<h2 id="路由分组"><a href="#路由分组" class="headerlink" title="路由分组"></a>路由分组</h2><p>路由分组可以使代码更加整洁规范，并且增加可读性。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	r := gin.Default()</span><br><span class="line">	userGroup := r.Group(<span class="string">&quot;/user&quot;</span>) <span class="comment">//userGroup专门处理user类的事务</span></span><br><span class="line">	&#123;</span><br><span class="line">		userGroup.GET(<span class="string">&quot;/index&quot;</span>, <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;...&#125;)</span><br><span class="line">		userGroup.GET(<span class="string">&quot;/login&quot;</span>, <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;...&#125;)</span><br><span class="line">		userGroup.POST(<span class="string">&quot;/login&quot;</span>, <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;...&#125;)</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">	shopGroup := r.Group(<span class="string">&quot;/shop&quot;</span>) <span class="comment">//shopGroup专门处理shop类的事务</span></span><br><span class="line">	&#123;</span><br><span class="line">		shopGroup.GET(<span class="string">&quot;/index&quot;</span>, <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;...&#125;)</span><br><span class="line">		shopGroup.GET(<span class="string">&quot;/cart&quot;</span>, <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;...&#125;)</span><br><span class="line">		shopGroup.POST(<span class="string">&quot;/checkout&quot;</span>, <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;...&#125;)</span><br><span class="line">	&#125;</span><br><span class="line">	r.Run()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以上的路由组例子可以将user类的事务和shop类的事务分隔开来，这样代码就更可观。</p>
+<h2 id="Gin中间件"><a href="#Gin中间件" class="headerlink" title="Gin中间件"></a>Gin中间件</h2><h3 id="定义中间件"><a href="#定义中间件" class="headerlink" title="定义中间件"></a>定义中间件</h3><p>Gin中的中间件必须是一个gin.HandlerFunc类型。例如定义一个简单的中间件：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// StatCost 是一个统计耗时请求耗时的中间件</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">SayHello</span><span class="params">()</span> <span class="title">gin</span>.<span class="title">HandlerFunc</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line">	     fmt.Println(<span class="string">&quot;Hello World&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们可以为每个路由添加任意数量的中间件。</p>
+<h3 id="注册中间件"><a href="#注册中间件" class="headerlink" title="注册中间件"></a>注册中间件</h3><p>全局注册中间件</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 新建一个没有任何默认中间件的路由</span></span><br><span class="line">	r := gin.New()</span><br><span class="line">	<span class="comment">// 注册一个全局中间件</span></span><br><span class="line">	r.Use(SayHello())</span><br><span class="line">	r.GET(<span class="string">&quot;/test&quot;</span>, <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line">		log.Println(<span class="string">&quot;hello world2&quot;</span>)</span><br><span class="line">	&#125;)</span><br><span class="line">	r.Run()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>单个注册中间件</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 给/test2路由单独注册中间件（可注册多个）</span></span><br><span class="line">	r.GET(<span class="string">&quot;/test2&quot;</span>, SayHello(), <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line">		log.Println(<span class="string">&quot;hello world2&quot;</span>)</span><br><span class="line">	&#125;)</span><br></pre></td></tr></table></figure>
+<h3 id="为路由组添加中间件"><a href="#为路由组添加中间件" class="headerlink" title="为路由组添加中间件"></a>为路由组添加中间件</h3><p>写法一：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">shopGroup := r.Group(<span class="string">&quot;/shop&quot;</span>, StatCost())</span><br><span class="line">&#123;</span><br><span class="line">    shopGroup.GET(<span class="string">&quot;/index&quot;</span>, <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;...&#125;)</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>写法二：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">shopGroup := r.Group(<span class="string">&quot;/shop&quot;</span>)</span><br><span class="line">shopGroup.Use(StatCost())</span><br><span class="line">&#123;</span><br><span class="line">    shopGroup.GET(<span class="string">&quot;/index&quot;</span>, <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;...&#125;)</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意事项：gin.Default()默认使用了Logger和Recovery中间件，其中：<br>Logger中间件将日志写入gin.DefaultWriter，即使配置了GIN_MODE=release。<br>Recovery中间件会recover任何panic。如果有panic的话，会写入500响应码。<br>如果不想使用上面两个默认的中间件，可以使用gin.New()新建一个没有任何默认中间件的路由。</p>
+<h2 id="RESTful-API"><a href="#RESTful-API" class="headerlink" title="RESTful API"></a>RESTful API</h2><p>REST是Representational State Transfer的简称，中文翻译为“表征状态转移”或“表现层状态转化”。只要API程序遵循了REST风格，那就可以称其为RESTful API。目前在前后端分离的架构中，前后端基本都是通过RESTful API来进行交互。简单来说，REST的含义就是客户端与Web服务器之间进行交互的时候，使用HTTP协议中的4个请求方法代表不同的动作。<br>GET用来获取资源<br>POST用来新建资源<br>PUT用来更新资源<br>DELETE用来删除资源。Gin框架支持restful开发。</p>
+<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/10/30/gin/" data-id="ckvs9enow00020ktxen2ugs7l" class="article-share-link">
+        Share
+      </a>
+      
+    </footer>
+
+  </div>
+
+  
+  
+<nav class="article-nav">
+  
+  <a href="/2021/10/30/go/" class="article-nav-link">
+    <strong class="article-nav-caption">Newer</strong>
+    <div class="article-nav-title">
+      
+      go语言基础
+      
+    </div>
+  </a>
+  
+  
+</nav>
+
+  
+
+  
+  
+  
+<div class="gitalk" id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+
+
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+
+<script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+
+<script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: 'dae3497341d0863387f0',
+    clientSecret: 'c8917b17cfe538734010049c6a998b56d4206d85',
+    repo: 'comments',
+    owner: 'hellenform',
+    admin: ['hellenform'],
+    // id: location.pathname,      // Ensure uniqueness and length less than 50
+    id: md5(location.pathname),
+    distractionFreeMode: false,  // Facebook-like distraction free mode
+    pagerDirection: 'last'
+  })
+
+  gitalk.render('gitalk-container')
+</script>
+
+  
+
+</article>
+</section>
+    <footer class="footer">
+  <div class="outer">
+    <div class="float-right">
+      <ul class="list-inline">
+  
+  <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+  <li><i class="fe fe-bookmark"></i> <span id="busuanzi_value_page_pv"></span></li>
+  
+</ul>
+    </div>
+    <ul class="list-inline">
+      <li>郑海镕的博客 &copy; 2021</li>
+      
+        <li>ZHWANGART</li>
+      
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>theme  <a target="_blank" rel="noopener" href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul>
+  </div>
+</footer>
+  </main>
+  <aside class="sidebar">
+    <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/hexo.svg" alt="郑海镕的博客"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">Home</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">Archives</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/2021/11/08/about_me">About me</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="Search">
+        <i class="fe fe-search"></i>
+        Search
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="fe fe-feed"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+  </aside>
+  
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/copybtn.js"></script>
+
+
+
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto',
+  });
+</script>
+
+
+
+<script src="/js/ocean.js"></script>
+
+</body>
+
+</html>
